@@ -52,6 +52,8 @@ function update() {
     fetch('api.php?_name=update', {method: 'POST', body: new FormData(edit)}).then(x => x.json()).then(function (j) {
         if (j.error)
             alert(JSON.stringify(j.error));
+        else if (!j.count)
+            alert('erreur lors de la mise à jour');
         else {
             //TODO
             refresh();
