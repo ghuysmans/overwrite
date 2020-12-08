@@ -1,0 +1,66 @@
+<html>
+<head>
+<title>Bulletin électronique</title>
+<meta charset="utf8">
+<meta name="viewport" content="width=device-width">
+<style>
+label {
+    display: block;
+}
+</style>
+</head>
+<body>
+<h1>Bulletin électronique</h1>
+
+
+<h2>Élèves</h2>
+<ul id="l"></ul>
+<h2>Encodage</h2>
+Cliquez sur l'un d'entre eux pour modifier sa note.
+Que le meilleur (des profs) gagne !
+<form id="edit" onsubmit="return update()">
+<label>Nom : <input name="name" required></label>
+<label>Note : <input type="number" required name="grade"></label>
+<button>Modifier</button>
+</form>
+
+
+<script>
+var l = document.getElementById('l');
+var edit = document.getElementById('edit');
+
+function refresh() {
+    l.innerHTML = '';
+    edit.reset();
+    fetch('api.php?_name=list').then(x => x.json()).then(function (j) {
+        if (j.error)
+            alert(j.error);
+        else
+            j.forEach(function (r) {
+                var li = document.createElement('li');
+                li.textContent = r.name + ' (' + r.grade + ')';
+                li.onclick = function() {
+                    edit.name.value = r.name;
+                    edit.grade.focus();
+                };
+                l.appendChild(li);
+            });
+    });
+}
+
+function update() {
+    fetch('api.php?_name=update', {method: 'POST', body: new FormData(edit)}).then(x => x.json()).then(function (j) {
+        if (j.error)
+            alert(JSON.stringify(j.error));
+        else {
+            //TODO
+            refresh();
+        }
+    });
+    return false;
+}
+
+refresh();
+</script>
+</body>
+</html>
